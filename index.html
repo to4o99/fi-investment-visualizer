@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Independence & Investment Visualizer</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                <i class="fa-solid fa-chart-line text-blue-600"></i>
+                FI Investment Visualizer
+            </h1>
+            <p class="text-slate-500 mt-2">Plan your path to living off your investments without depleting your principal.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Sidebar: Controls -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+                    <h2 class="text-xl font-semibold border-b pb-3">Investment Parameters</h2>
+                    
+                    <!-- Initial Investment -->
+                    <div>
+                        <label for="initialInvestment" class="block text-sm font-medium text-slate-700 mb-1">Initial Investment ($)</label>
+                        <input type="number" id="initialInvestment" min="0" step="1000" value="10000" class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Monthly Investment -->
+                    <div>
+                        <label for="monthlyContribution" class="block text-sm font-medium text-slate-700 mb-1">Monthly Contribution ($)</label>
+                        <input type="number" id="monthlyContribution" min="0" step="50" value="500" class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <!-- Annual Return (%) -->
+                    <div>
+                        <label for="annualReturn" class="block text-sm font-medium text-slate-700 mb-1">Expected Annual Return (%)</label>
+                        <input type="number" id="annualReturn" min="1" max="100" step="0.1" value="7.0" class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <p class="text-xs text-slate-400 mt-1">Historically, World ETFs average 7-10%.</p>
+                    </div>
+
+                    <!-- Years in Market -->
+                    <div>
+                        <label for="years" class="block text-sm font-medium text-slate-700 mb-1">Years to Visualize</label>
+                        <input type="number" id="years" min="1" max="100" step="1" value="30" class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+
+                <!-- FI Goals Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+                    <h2 class="text-xl font-semibold border-b pb-3 text-emerald-700">Financial Independence Goal</h2>
+                    
+                    <!-- Target Monthly Income -->
+                    <div>
+                        <label for="targetIncome" class="block text-sm font-medium text-slate-700 mb-1">Desired Monthly Income ($)</label>
+                        <input type="number" id="targetIncome" min="100" step="100" value="3000" class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <p class="text-xs text-slate-400 mt-1">Income you want to extract monthly.</p>
+                    </div>
+
+                    <!-- Safe Withdrawal Rate -->
+                    <div>
+                        <label for="withdrawalRate" class="block text-sm font-medium text-slate-700 mb-1">Safe Withdrawal Rate (%)</label>
+                        <input type="number" id="withdrawalRate" min="0.1" max="20" step="0.1" value="3.0" class="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <p class="text-xs text-slate-400 mt-1">Modified 4% rule. 3% is considered highly safe to preserve capital indefinitely.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Main Area: Results & Chart -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                        <div class="text-slate-500 text-sm font-medium mb-1">Target Portfolio Size</div>
+                        <div class="text-2xl font-bold text-slate-900" id="targetPortfolioSize">--</div>
+                        <div class="text-xs text-slate-400 mt-2">Required to safely extract your monthly goal.</div>
+                    </div>
+                    
+                    <div class="bg-emerald-50 p-5 rounded-2xl shadow-sm border border-emerald-100 relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 text-emerald-100 opacity-50">
+                            <i class="fa-solid fa-flag-checkered text-7xl"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <div class="text-emerald-700 text-sm font-medium mb-1">Time to Reach Goal</div>
+                            <div class="text-3xl font-bold text-emerald-600" id="timeToGoal">--</div>
+                            <div class="text-xs text-emerald-600/80 mt-2">Based on current contributions.</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-5 rounded-2xl shadow-sm border border-blue-100">
+                        <div class="text-blue-700 text-sm font-medium mb-1">Value at <span id="displayEndYear">30</span> Years</div>
+                        <div class="text-2xl font-bold text-blue-900" id="endPortfolioValue">--</div>
+                        <div class="text-xs text-blue-600/80 mt-2"><span id="endProfitStr">--</span> from returns.</div>
+                    </div>
+                </div>
+
+                <!-- Chart -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-lg font-semibold mb-4 text-slate-800">Portfolio Growth Over Time</h3>
+                    <div class="relative h-[400px] w-full">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 text-sm text-slate-600 flex gap-4 items-start">
+                    <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 text-lg"></i>
+                    <div>
+                        <p class="font-medium text-slate-800 mb-1">How is this calculated?</p>
+                        <p>The calculation uses monthly compound interest. Your <strong>Target Portfolio Size</strong> is calculated by taking your desired annual income (Monthly × 12) and dividing it by your Safe Withdrawal Rate. For example, $3,000/mo ($36,000/yr) ÷ 3% = $1,200,000 target.</p>
+                        <p class="mt-2 text-xs italic">* This simulation assumes steady returns and does not account for inflation, taxes, or market volatility.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const inputs = {
+            initial: document.getElementById('initialInvestment'),
+            monthly: document.getElementById('monthlyContribution'),
+            returnRate: document.getElementById('annualReturn'),
+            years: document.getElementById('years'),
+            targetIncome: document.getElementById('targetIncome'),
+            withdrawalRate: document.getElementById('withdrawalRate')
+        };
+
+        const outputs = {
+            targetSize: document.getElementById('targetPortfolioSize'),
+            timeToGoal: document.getElementById('timeToGoal'),
+            endValue: document.getElementById('endPortfolioValue'),
+            displayYear: document.getElementById('displayEndYear'),
+            endProfitStr: document.getElementById('endProfitStr')
+        };
+
+        let myChart = null;
+
+        // Formatter utilities
+        const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+        const formatNumber = (val) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(val);
+
+        function initChart() {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            
+            // Register a custom plugin to draw a target line
+            const horizontalLinePlugin = {
+                id: 'horizontalLine',
+                afterDraw: (chart) => {
+                    if (chart.options.plugins.horizontalLine && chart.options.plugins.horizontalLine.y) {
+                        const yValue = chart.options.plugins.horizontalLine.y;
+                        const yAxis = chart.scales.y;
+                        const xAxis = chart.scales.x;
+                        
+                        // Only draw if target is within the visible chart area
+                        if (yValue >= yAxis.min && yValue <= yAxis.max) {
+                            const yPixel = yAxis.getPixelForValue(yValue);
+                            const ctx = chart.ctx;
+                            
+                            ctx.save();
+                            ctx.beginPath();
+                            ctx.moveTo(xAxis.left, yPixel);
+                            ctx.lineTo(xAxis.right, yPixel);
+                            ctx.lineWidth = 2;
+                            ctx.strokeStyle = '#10b981'; // Emerald 500
+                            ctx.setLineDash([5, 5]);
+                            ctx.stroke();
+                            
+                            // Target Label
+                            ctx.fillStyle = '#10b981';
+                            ctx.font = 'bold 12px Inter';
+                            ctx.fillText(' TARGET GOAL', xAxis.left + 10, yPixel - 8);
+                            ctx.restore();
+                        }
+                    }
+                }
+            };
+
+            Chart.register(horizontalLinePlugin);
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Total Value',
+                            data: [],
+                            borderColor: '#3b82f6', // Blue 500
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHitRadius: 10,
+                            order: 1
+                        },
+                        {
+                            label: 'Total Contributions',
+                            data: [],
+                            borderColor: '#94a3b8', // Slate 400
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHitRadius: 10,
+                            order: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += formatCurrency(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: { usePointStyle: true, boxWidth: 8 }
+                        },
+                        horizontalLine: {
+                            y: 0 // Will be updated dynamically
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M';
+                                    if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'k';
+                                    return '$' + value;
+                                }
+                            },
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' } // Slate 100
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculate() {
+            // Get current values
+            const initial = parseFloat(inputs.initial.value) || 0;
+            const monthly = parseFloat(inputs.monthly.value) || 0;
+            const annualRate = parseFloat(inputs.returnRate.value) || 0;
+            const years = parseInt(inputs.years.value) || 0;
+            const targetIncome = parseFloat(inputs.targetIncome.value) || 0;
+            const withdrawalRate = parseFloat(inputs.withdrawalRate.value) || 0.1;
+
+            // Update display labels
+            outputs.displayYear.innerText = years;
+
+            // 1. Calculate Target Portfolio
+            // (Monthly Income * 12) / (Withdrawal Rate / 100)
+            const targetPortfolio = (targetIncome * 12) / (withdrawalRate / 100);
+            outputs.targetSize.innerText = formatCurrency(targetPortfolio);
+
+            // 2. Simulate to find Time to Goal
+            const monthlyRate = annualRate / 100 / 12;
+            let simBalance = initial;
+            let monthsToGoal = -1;
+            const maxMonths = 100 * 12; // Cap at 100 years to prevent infinite loops
+
+            if (simBalance >= targetPortfolio) {
+                monthsToGoal = 0;
+            } else {
+                for (let m = 1; m <= maxMonths; m++) {
+                    simBalance += monthly;
+                    simBalance *= (1 + monthlyRate);
+                    if (simBalance >= targetPortfolio) {
+                        monthsToGoal = m;
+                        break;
+                    }
+                }
+            }
+
+            if (monthsToGoal === -1) {
+                outputs.timeToGoal.innerText = "> 100 Years";
+                outputs.timeToGoal.classList.add("text-orange-500");
+                outputs.timeToGoal.classList.remove("text-emerald-600");
+            } else {
+                const y = Math.floor(monthsToGoal / 12);
+                const mo = monthsToGoal % 12;
+                let timeStr = "";
+                if (y > 0) timeStr += `${y} yrs `;
+                if (mo > 0 || y === 0) timeStr += `${mo} mos`;
+                outputs.timeToGoal.innerText = timeStr;
+                outputs.timeToGoal.classList.remove("text-orange-500");
+                outputs.timeToGoal.classList.add("text-emerald-600");
+            }
+
+            // 3. Generate Chart Data
+            let currentBalance = initial;
+            let totalInvested = initial;
+            const chartLabels = ['Year 0'];
+            const chartBalances = [initial];
+            const chartInvestments = [initial];
+
+            for (let y = 1; y <= years; y++) {
+                for (let m = 1; m <= 12; m++) {
+                    currentBalance += monthly;
+                    currentBalance *= (1 + monthlyRate);
+                    totalInvested += monthly;
+                }
+                chartLabels.push(`Year ${y}`);
+                chartBalances.push(currentBalance);
+                chartInvestments.push(totalInvested);
+            }
+
+            const endProfit = currentBalance - totalInvested;
+            outputs.endValue.innerText = formatCurrency(currentBalance);
+            outputs.endProfitStr.innerText = formatCurrency(endProfit);
+
+            // Update Chart
+            myChart.data.labels = chartLabels;
+            myChart.data.datasets[0].data = chartBalances;
+            myChart.data.datasets[1].data = chartInvestments;
+            myChart.options.plugins.horizontalLine.y = targetPortfolio;
+            myChart.update();
+        }
+
+        // Event Listeners
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        // Initialize
+        window.onload = () => {
+            initChart();
+            calculate();
+        };
+
+    </script>
+</body>
+</html>

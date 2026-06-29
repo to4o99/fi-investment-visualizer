@@ -2,24 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Service - FI Investment Visualizer</title>
-    <style>body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 4px auto; padding: 20px; color: #333; }</style>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📈</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    </style>
 </head>
-<body>
-    <a href="index.html">&larr; Back to Visualizer</a>
-    <h1>Terms of Service</h1>
-    
-    <p>By accessing or using the FI Investment Visualizer, you agree to comply with and be bound by the following terms and conditions.</p>
-    
-    <h2>1. Acceptable Use</h2>
-    <p>You agree to use this tool only for legal personal planning. Automated scraping, reverse-engineering, or attempts to disrupt the security or hosting of this website are strictly prohibited.</p>
-    
-    <h2>2. Intellectual Property</h2>
-    <p>The code, layouts, branding, and logic of this visualizer belong to the site owners and are protected by applicable copyright laws.</p>
-    
-    <h2>3. Limitation of Liability</h2>
-    <p>Under no circumstances shall the website owners be liable for any direct, indirect, or incidental losses arising out of your reliance on the outputs of this tool.</p>
-    
-    <p><a href="index.html">Return to Home</a></p>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <a href="index.html" class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition mb-6">
+            <i class="fa-solid fa-arrow-left"></i> Back to Visualizer
+        </a>
+        
+        <main class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 sm:p-10 space-y-6">
+            <h1 class="text-3xl font-bold text-slate-900 border-b border-slate-100 pb-4 flex items-center gap-3">
+                <i class="fa-solid fa-file-contract text-blue-600"></i> Terms of Service
+            </h1>
+            
+            <p class="text-slate-600">By accessing or using the FI Investment Visualizer, you agree to comply with and be bound by the following terms and conditions.</p>
+            
+            <div class="space-y-3">
+                <h2 class="text-lg font-semibold text-slate-900">1. Acceptable Use</h2>
+                <p class="text-slate-600 text-sm leading-relaxed">You agree to use this tool only for legal personal planning. Automated scraping, reverse-engineering, or attempts to disrupt the security or hosting of this website are strictly prohibited.</p>
+            </div>
+            
+            <div class="space-y-3">
+                <h2 class="text-lg font-semibold text-slate-900">2. Intellectual Property</h2>
+                <p class="text-slate-600 text-sm leading-relaxed">The code, layouts, branding, and logic of this visualizer belong to the site owners and are protected by applicable copyright laws.</p>
+            </div>
+            
+            <div class="space-y-3">
+                <h2 class="text-lg font-semibold text-slate-900">3. Limitation of Liability</h2>
+                <p class="text-slate-600 text-sm leading-relaxed">Under no circumstances shall the website owners be liable for any direct, indirect, or incidental losses arising out of your reliance on the outputs of this tool.</p>
+            </div>
+        </main>
+    </div>
+
+    <footer class="py-8 text-center border-t border-slate-200 text-sm text-slate-500 bg-white">
+        <p class="mb-2">&copy; 2026 FI Investment Visualizer. All rights reserved.</p>
+        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-blue-600 font-medium">
+            <a href="about.html" class="hover:underline">About Us</a>
+            <a href="contact.html" class="hover:underline">Contact Us</a>
+            <a href="privacy-policy.html" class="hover:underline">Privacy Policy</a>
+            <a href="terms.html" class="hover:underline">Terms of Service</a>
+            <a href="disclaimer.html" class="hover:underline">Financial Disclaimer</a>
+        </div>
+    </footer>
 </body>
 </html>
